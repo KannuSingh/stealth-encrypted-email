@@ -53,10 +53,12 @@ export function Home() {
      // use the user's connected account to signed a message and then generate a viewing and spending 
      // keys and save those in stealthAddressRegistry.
      const stealthKeyRegistry = new StealthKeyRegistry(signer as unknown as JsonRpcSigner)
-    
      const stealthKeysSet = await stealthKeyRegistry.getStealthKeys(accounts[0])
      console.log("Users Stealth Key Sets",stealthKeysSet)
      if(stealthKeysSet){
+      const stealthKeysPairs = await getPrivateKeys(signer as unknown as JsonRpcSigner)
+
+      localStorage.setItem('StealthKeysSet',JSON.stringify(stealthKeysPairs))
       router.push('/dashboard')
      }else{
        console.log(`Stealth Keys not set`)

@@ -1,23 +1,31 @@
 import React from 'react';
 import { Mail } from '@/app/dashboard/page';
+import { AnnouncementForUser } from '@/utils/StealthEmailUtils';
+import { formatDistanceToNow } from 'date-fns';
 
 interface MailListProps {
+  announcementsForUser:AnnouncementForUser[]
   mailList: Mail[];
   handleMailClick: (mail: Mail) => void;
 }
 
-const MailList: React.FC<MailListProps> = ({ mailList, handleMailClick }) => {
+const MailList: React.FC<MailListProps> = ({ announcementsForUser,mailList, handleMailClick }) => {
+  if(announcementsForUser.length === 0){
+    return <h3>No mails for user</h3>
+  }
+  
   return (
     <ul className="space-y-4">
-      {mailList.map((mail) => (
-        <li key={mail.id}>
+      
+       {announcementsForUser.map((announcementForUser,index) => (
+        <li key={index}>
           <div
             className="bg-gray-100 p-4 rounded-lg cursor-pointer"
-            onClick={() => handleMailClick(mail)}
+            onClick={() => console.log('mail')}
           >
-            <h3 className="font-bold">{mail.subject}</h3>
-            <p>From: {mail.from}</p>
-            <p>Time: {mail.time}</p>
+            <h3 className="font-bold">{'New Mail'}</h3>
+            <p>From: {announcementForUser.announcement.from}</p>
+            <p>Time: {formatDistanceToNow(parseInt(announcementForUser.announcement.timestamp)*1000)}</p>
           </div>
         </li>
       ))}

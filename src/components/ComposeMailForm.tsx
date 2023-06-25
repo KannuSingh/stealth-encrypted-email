@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { MdClose, MdMinimize } from "react-icons/md";
-import * as IPFS from "ipfs-http-client";
 import { JsonRpcSigner } from "@ethersproject/providers";
 import useAccount from "@/hooks/useAccount";
 import { Web3Storage } from "web3.storage";
 import { StealthKeyRegistry } from "@/utils/e3Stealth-js/classes/StealthKeyRegistry";
-import { prepareSend } from "@/utils/stealthEmail";
+import { prepareSend } from "@/utils/StealthEmailUtils";
 import { StealthMail } from "@/utils/e3Stealth-js/classes/StealthEmail";
 import { ethers } from "ethers";
 import { showToast } from "./ToastContainer";
@@ -52,7 +51,7 @@ const ComposeMailForm: React.FC<ComposeMailFormProps> = ({ onClose }) => {
           const emailFile = makeFileObjects(JSON.stringify(formData))
          // const cid = await client.put(emailFile);
           //console.log(cid)
-         const {stealthKeyPair, pubKeyXCoordinate, encryptedRandomNumber,emailCid} = await prepareSend(to,"cid",registeryKeyPairs.viewingPublicKey,registeryKeyPairs.spendingPublicKey)
+         const {stealthKeyPair, pubKeyXCoordinate, encryptedRandomNumber,emailCid} = await prepareSend("cid",registeryKeyPairs.viewingPublicKey,registeryKeyPairs.spendingPublicKey)
           console.log(`${stealthKeyPair} , ${pubKeyXCoordinate}, ${encryptedRandomNumber}, ${emailCid}`)
 
           const stealthEmail = new StealthMail(signer as unknown as JsonRpcSigner);

@@ -1,9 +1,12 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Sidebar from '@/components/Sidebar';
 import MailDetails from '@/components/MailDetails';
 import MailList from '@/components/MailList';
 import ComposeMailForm from '@/components/ComposeMailForm';
+import { ethers } from 'ethers';
+import useAccount from '@/hooks/useAccount';
+import { Announcement, AnnouncementForUser, isAnnouncementForUser } from '@/utils/StealthEmailUtils';
 
 export interface Mail {
   id: number;
@@ -17,6 +20,119 @@ const Dashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('inbox');
   const [selectedMail, setSelectedMail] = useState<Mail | null>(null);
   const [isComposeOpen, setIsComposeOpen] = useState(false);
+  const [announcementsForUser, setAnnouncementsForUser] = useState<AnnouncementForUser[]>([]);
+  const stealthMailContractAddress = '0x45d1A5afdf1fBa11CC4e5E2Ca37Aa0BF7149B82A';
+  const { signer,provider } = useAccount();
+  const stealthMailABI = [
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "internalType": "address",
+            "name": "receiver",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "internalType": "bytes32",
+            "name": "pkx",
+            "type": "bytes32"
+          },
+          {
+            "indexed": false,
+            "internalType": "bytes32",
+            "name": "ciphertext",
+            "type": "bytes32"
+          },
+          {
+            "indexed": false,
+            "internalType": "bytes32",
+            "name": "cid",
+            "type": "bytes32"
+          }
+        ],
+        "name": "Announcement",
+        "type": "event"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address payable",
+            "name": "_receiver",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "_pkx",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "_ciphertext",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "_cid",
+            "type": "bytes32"
+          }
+        ],
+        "name": "sendEmail",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+      }
+    ];
+  useEffect(() => {
+    const fetchAnnouncements = async () => {
+      try {
+        const contract = new ethers.Contract(stealthMailContractAddress, stealthMailABI, signer!);
+
+        const filter = contract.filters.Announcement();
+        const events = await contract.queryFilter(filter);
+        console.log(events)
+        const parsedAnnouncements:Announcement[] = await Promise.all(
+          events.map(async (event) => {
+            const transaction = await provider!.getTransaction(event.transactionHash);
+            const emittingAccount = transaction.from;
+            const block = await provider!.getBlock(transaction.blockHash!);
+            const timestamp = block.timestamp;
+            return {
+              from: emittingAccount,
+              timestamp:timestamp.toString(),
+              receiver: event.args.receiver,
+              pkx: event.args.pkx,
+              ciphertext: event.args.ciphertext,
+              cid: event.args.cid,
+            };
+          })
+        );
+        console.log(parsedAnnouncements)
+        const mailAnnouncementForUser =  processedAnnouncements(parsedAnnouncements)
+        setAnnouncementsForUser(mailAnnouncementForUser);
+      } catch (error) {
+        console.error('Error fetching announcements:', error);
+      }
+    };
+
+    fetchAnnouncements();
+  }, []);
+
+  const processedAnnouncements = (parsedAnnouncements: Announcement[]) =>{
+    const stealthKeysSet = JSON.parse(localStorage.getItem('StealthKeysSet')!)
+    console.log(stealthKeysSet)
+    const mailForUser:AnnouncementForUser[] = []
+    parsedAnnouncements.forEach((announcement:Announcement) =>{
+      console.log(announcement)
+
+      const result:AnnouncementForUser = isAnnouncementForUser(stealthKeysSet.spendingKeyPair.publicKeyHex,stealthKeysSet.viewingKeyPair.privateKeyHex,announcement)
+      if(result.isForUser){
+        mailForUser.push(result)
+      }
+    })
+    return mailForUser;
+  }
 
   const handleTabChange = (tabId: string) => {
     setActiveTab(tabId);
@@ -63,7 +179,7 @@ const Dashboard: React.FC = () => {
           {selectedMail ? (
             <MailDetails selectedMail={selectedMail} handleBackToMails={handleBackToMails} />
           ) : (
-            <MailList mailList={filteredMailList} handleMailClick={handleMailClick} />
+            <MailList announcementsForUser={announcementsForUser} mailList={filteredMailList} handleMailClick={handleMailClick} />
           )}
         </main>
       </div>
