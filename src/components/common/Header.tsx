@@ -44,6 +44,7 @@ const Header = () => {
         </div>
       :
       <div className="flex items-center ">
+        <label htmlFor="chain" className="text-gray-300 mr-2">{accounts[0]}</label>
         <button
             className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg text-sm"
             onClick={handleDisconnect}

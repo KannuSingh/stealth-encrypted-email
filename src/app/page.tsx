@@ -71,7 +71,7 @@ export function Home() {
   return (
     <div className="w-full p-4 md:p-8">
       <div className="flex items-center justify-center  mb-4">
-        <h1 className="text-4xl font-bold">Welcome to Stealth Encrypted Onchain Email</h1>
+        <h1 className="text-4xl font-bold">Welcome to Encrypted Ethereum Onchain Email</h1>
         
       </div>
       <p className="text-xl text-gray-600 mb-8 text-center">Effortlessly Manage Your Encrypted Ethereum Email</p>
