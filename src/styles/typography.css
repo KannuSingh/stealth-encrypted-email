@@ -1,0 +1,103 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --display-2xl: 86px;
+    --display-xl: 68px;
+    --display-lg: 48px;
+    --display-md: 34px;
+    --display-sm: 26px;
+    --display-xs: 21px;
+
+    --light: 300;
+    --normal: 400;
+    --medium: 500;
+    --bold: 700;
+  }
+
+  button {
+    @apply text-white;
+  }
+
+  body {
+    @apply text-base text-white;
+  }
+
+  h1 {
+    font-size: var(--display-2xl);
+    font-weight: var(--normal);
+    line-height: 94px;
+  }
+
+  h2 {
+    font-size: var(--display-xl);
+    font-weight: var(--normal);
+    line-height: 74px;
+  }
+
+  h3 {
+    font-size: var(--display-lg);
+    font-weight: var(--normal);
+    line-height: 42px;
+  }
+
+  h4 {
+    font-size: var(--display-md);
+    font-weight: var(--normal);
+    line-height: 37px;
+  }
+
+  h5 {
+    font-size: var(--display-sm);
+    font-weight: var(--normal);
+    line-height: 28px;
+  }
+
+  h6 {
+    font-size: var(--display-xs);
+    font-weight: var(--normal);
+    line-height: 22px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply text-white font-nunito font-medium capitalize;
+  }
+
+  @layer utilities {
+    .heading {
+      @apply font-nunito capitalize font-[700] tracking-[-2%];
+    }
+
+    .label {
+      @apply font-nunito uppercase text-white/[0.55];
+    }
+  }
+
+  /*
+   *   LABEL
+  */
+
+  .label {
+    @apply uppercase font-light font-nunito text-white/[0.55];
+    letter-spacing: 0.11em;
+    /* font-size: var(--label-md); */
+  }
+
+  p,
+  a,
+  span {
+    @apply text-white font-light;
+  }
+
+  ul,
+  li {
+    @apply text-white font-light;
+  }
+}
