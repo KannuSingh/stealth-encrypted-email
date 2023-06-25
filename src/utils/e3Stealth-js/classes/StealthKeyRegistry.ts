@@ -8,7 +8,9 @@ import { Contract, JsonRpcSigner } from '../ethers';
 import type { EthersProvider } from '../types';
 import { ContractTransaction, Signer } from 'ethers';
 
-const stealthKeyRegistry = '0xE02F24B9c82wsde34c7c411E53b69e489BceE5C4';
+// Address of the StealthKeyRegistry is the same on all supported networks
+// Currently deployed on Goerli Testnet with personal account
+const stealthKeyRegistry = '0x6c7be28Cbb264E8BD6f2bA26D620da3AAB2F3cb4';
 const abi = [
   'event StealthKeyChanged(address indexed registrant, uint256 spendingPubKeyPrefix, uint256 spendingPubKey, uint256 viewingPubKeyPrefix, uint256 viewingPubKey)',
   'function DOMAIN_SEPARATOR() view returns (bytes32)',
