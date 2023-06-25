@@ -1,15 +1,21 @@
 import { useState } from "react";
 import { MdClose, MdMinimize } from "react-icons/md";
 import * as IPFS from "ipfs-http-client";
-import * as LitJsSdk from "@lit-protocol/lit-node-client";
+import { JsonRpcSigner } from "@ethersproject/providers";
 import useAccount from "@/hooks/useAccount";
 import { Web3Storage } from "web3.storage";
+import { StealthKeyRegistry } from "@/utils/e3Stealth-js/classes/StealthKeyRegistry";
+import { prepareSend } from "@/utils/stealthEmail";
+import { StealthMail } from "@/utils/e3Stealth-js/classes/StealthEmail";
+import { ethers } from "ethers";
+import { showToast } from "./ToastContainer";
 
 interface ComposeMailFormProps {
   onClose: () => void;
 }
 
 const ComposeMailForm: React.FC<ComposeMailFormProps> = ({ onClose }) => {
+  
   const [to, setTo] = useState("");
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
@@ -17,10 +23,6 @@ const ComposeMailForm: React.FC<ComposeMailFormProps> = ({ onClose }) => {
 
   const {  accounts,signer,provider,handleConnect } = useAccount();
   function makeFileObjects (formData:string) {
-    // You can create File objects from a Blob of binary data
-    // see: https://developer.mozilla.org/en-US/docs/Web/API/Blob
-    // Here we're just storing a JSON object, but you can store images,
-    // audio, or whatever you want!
     const blob = new Blob([formData], { type: 'application/json' })
   
     const files = [
@@ -31,25 +33,39 @@ const ComposeMailForm: React.FC<ComposeMailFormProps> = ({ onClose }) => {
   }
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if(signer){
-        
-    }
-    
-    // Convert form data to a JSON object
-    const formData = {
-      to,
-      subject,
-      message,
-    };
-  
-
     try {
-      const client = new Web3Storage({ token: process.env.NEXT_PUBLIC_WEB3_STORAGE_API_KEY! })
+      if(signer){
+        const stealthKeyRegistry = new StealthKeyRegistry(signer as unknown as JsonRpcSigner)
+        const isStealthKeysSet = await stealthKeyRegistry.isStealthKeysSet(to)
+        if(isStealthKeysSet){
+          const registeryKeyPairs = await stealthKeyRegistry.getStealthKeys(to)
+          console.log(registeryKeyPairs)
+          // Convert form data to a JSON object
+          const formData = {
+            to,
+            subject,
+            message,
+          };
+          const client = new Web3Storage({ token: process.env.NEXT_PUBLIC_WEB3_STORAGE_API_KEY! })
 
-      console.log(client)
-      const emailFile = makeFileObjects(JSON.stringify(formData))
-      const cid = await client.put(emailFile);
-      console.log(cid)
+          console.log(client)
+          const emailFile = makeFileObjects(JSON.stringify(formData))
+         // const cid = await client.put(emailFile);
+          //console.log(cid)
+         const {stealthKeyPair, pubKeyXCoordinate, encryptedRandomNumber,emailCid} = await prepareSend(to,"cid",registeryKeyPairs.viewingPublicKey,registeryKeyPairs.spendingPublicKey)
+          console.log(`${stealthKeyPair} , ${pubKeyXCoordinate}, ${encryptedRandomNumber}, ${emailCid}`)
+
+          const stealthEmail = new StealthMail(signer as unknown as JsonRpcSigner);
+          const bytes32Cid = ethers.utils.formatBytes32String(emailCid);
+          const emailSuccessStatus = await stealthEmail.sendStealthMail(stealthKeyPair.address,pubKeyXCoordinate,encryptedRandomNumber.ciphertext,bytes32Cid);
+          if(emailSuccessStatus){
+            showToast("Successfully Sent Email")
+          }else{
+            showToast("Unsuccessful in sending Email")
+          }
+        }
+      }
+      
       setTo("");
       setSubject("");
       setMessage("");
@@ -107,7 +123,7 @@ const ComposeMailForm: React.FC<ComposeMailFormProps> = ({ onClose }) => {
             To:
           </label>
           <input
-            type="email"
+            type="text"
             id="to"
             value={to}
             onChange={(e) => setTo(e.target.value)}
