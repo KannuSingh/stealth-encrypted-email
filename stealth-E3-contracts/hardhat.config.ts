@@ -30,6 +30,12 @@ function getNetworks(): NetworksUserConfig {
             url: "https://rpc.gnosischain.com",
             accounts: accounts,
           },
+          linea: {
+            url: "https://rpc.goerli.linea.build",
+            accounts: accounts,
+          },
+
+          
       }
   }
 
