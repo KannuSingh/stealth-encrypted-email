@@ -35,10 +35,10 @@ export async function prepareSend(emailCid:string, recipientViewingPublicKey:str
 
     // Compute stealth address
     const stealthKeyPair = recipientSpendingKeyPair.mulPublicKey(randomNumber);
-
+    const cidBuffer = Buffer.from(emailCid);
+    // Encrypt the CID with the receiver's public key
     return { stealthKeyPair, pubKeyXCoordinate, encryptedRandomNumber,emailCid };
   }
-
 
   export function isAnnouncementForUser(spendingPublicKey: string, viewingPrivateKey: string, announcement:Announcement) {
     try {

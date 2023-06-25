@@ -5,11 +5,10 @@ import { formatDistanceToNow } from 'date-fns';
 
 interface MailListProps {
   announcementsForUser:AnnouncementForUser[]
-  mailList: Mail[];
-  handleMailClick: (mail: Mail) => void;
+  handleMailClick: (announcementForUser: AnnouncementForUser) => void;
 }
 
-const MailList: React.FC<MailListProps> = ({ announcementsForUser,mailList, handleMailClick }) => {
+const MailList: React.FC<MailListProps> = ({ announcementsForUser, handleMailClick }) => {
   if(announcementsForUser.length === 0){
     return <h3>No mails for user</h3>
   }
@@ -21,7 +20,7 @@ const MailList: React.FC<MailListProps> = ({ announcementsForUser,mailList, hand
         <li key={index}>
           <div
             className="bg-gray-100 p-4 rounded-lg cursor-pointer"
-            onClick={() => console.log('mail')}
+            onClick={() => {handleMailClick(announcementForUser)}}
           >
             <h3 className="font-bold">{'New Mail'}</h3>
             <p>From: {announcementForUser.announcement.from}</p>

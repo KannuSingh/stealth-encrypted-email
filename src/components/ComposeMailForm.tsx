@@ -49,13 +49,13 @@ const ComposeMailForm: React.FC<ComposeMailFormProps> = ({ onClose }) => {
 
           console.log(client)
           const emailFile = makeFileObjects(JSON.stringify(formData))
-         // const cid = await client.put(emailFile);
-          //console.log(cid)
-         const {stealthKeyPair, pubKeyXCoordinate, encryptedRandomNumber,emailCid} = await prepareSend("cid",registeryKeyPairs.viewingPublicKey,registeryKeyPairs.spendingPublicKey)
+          const cid = await client.put(emailFile);
+          console.log(cid)
+          const {stealthKeyPair, pubKeyXCoordinate, encryptedRandomNumber,emailCid} = await prepareSend(cid,registeryKeyPairs.viewingPublicKey,registeryKeyPairs.spendingPublicKey)
           console.log(`${stealthKeyPair} , ${pubKeyXCoordinate}, ${encryptedRandomNumber}, ${emailCid}`)
 
           const stealthEmail = new StealthMail(signer as unknown as JsonRpcSigner);
-          const bytes32Cid = ethers.utils.formatBytes32String(emailCid);
+          const bytes32Cid = formatStringToBytes(emailCid);
           const emailSuccessStatus = await stealthEmail.sendStealthMail(stealthKeyPair.address,pubKeyXCoordinate,encryptedRandomNumber.ciphertext,bytes32Cid);
           if(emailSuccessStatus){
             showToast("Successfully Sent Email")
@@ -75,7 +75,10 @@ const ComposeMailForm: React.FC<ComposeMailFormProps> = ({ onClose }) => {
       console.error("Error adding data to IPFS:", error);
     }
   };
-  
+  function formatStringToBytes(input:string) {
+    const bytes = ethers.utils.toUtf8Bytes(input);
+    return ethers.utils.hexlify(bytes);
+  }
 
   const handleToggleMinimize = () => {
     setMinimized((prevMinimized) => !prevMinimized);

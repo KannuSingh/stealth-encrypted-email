@@ -28,7 +28,7 @@ import type {
 
 export interface StealthMailInterface extends utils.Interface {
   functions: {
-    "sendEmail(address,bytes32,bytes32,bytes32)": FunctionFragment;
+    "sendEmail(address,bytes32,bytes32,bytes)": FunctionFragment;
   };
 
   getFunction(nameOrSignatureOrTopic: "sendEmail"): FunctionFragment;
@@ -46,7 +46,7 @@ export interface StealthMailInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "sendEmail", data: BytesLike): Result;
 
   events: {
-    "Announcement(address,bytes32,bytes32,bytes32)": EventFragment;
+    "Announcement(address,bytes32,bytes32,bytes)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Announcement"): EventFragment;
@@ -120,7 +120,7 @@ export interface StealthMail extends BaseContract {
   };
 
   filters: {
-    "Announcement(address,bytes32,bytes32,bytes32)"(
+    "Announcement(address,bytes32,bytes32,bytes)"(
       receiver?: PromiseOrValue<string> | null,
       pkx?: null,
       ciphertext?: null,

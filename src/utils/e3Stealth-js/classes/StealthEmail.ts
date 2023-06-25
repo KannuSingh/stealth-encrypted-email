@@ -3,68 +3,68 @@ import { StealthMail as StealthMailContract } from '../typechain/StealthMail';
 import { Contract, JsonRpcSigner } from '../ethers';
 import type { EthersProvider } from '../types';
 
-const stealthMail = '0x45d1A5afdf1fBa11CC4e5E2Ca37Aa0BF7149B82A';
-const abi = [
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "receiver",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "bytes32",
-          "name": "pkx",
-          "type": "bytes32"
-        },
-        {
-          "indexed": false,
-          "internalType": "bytes32",
-          "name": "ciphertext",
-          "type": "bytes32"
-        },
-        {
-          "indexed": false,
-          "internalType": "bytes32",
-          "name": "cid",
-          "type": "bytes32"
-        }
-      ],
-      "name": "Announcement",
-      "type": "event"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address payable",
-          "name": "_receiver",
-          "type": "address"
-        },
-        {
-          "internalType": "bytes32",
-          "name": "_pkx",
-          "type": "bytes32"
-        },
-        {
-          "internalType": "bytes32",
-          "name": "_ciphertext",
-          "type": "bytes32"
-        },
-        {
-          "internalType": "bytes32",
-          "name": "_cid",
-          "type": "bytes32"
-        }
-      ],
-      "name": "sendEmail",
-      "outputs": [],
-      "stateMutability": "payable",
-      "type": "function"
-    }
-  ];
+export const stealthMailContractAddress = '0x301d9477bC7f1dd924Be528c44e1DDD581C411A6';
+export const stealthMailABI = [
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "receiver",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "pkx",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "ciphertext",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes",
+        "name": "cid",
+        "type": "bytes"
+      }
+    ],
+    "name": "Announcement",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address payable",
+        "name": "_receiver",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "_pkx",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "_ciphertext",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes",
+        "name": "_cid",
+        "type": "bytes"
+      }
+    ],
+    "name": "sendEmail",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  }
+];
 
 export class StealthMail {
   readonly _stealthMail: StealthMailContract;
@@ -74,7 +74,7 @@ export class StealthMail {
    * @param signerOrProvider signer or provider to use
    */
   constructor(signerOrProvider: JsonRpcSigner | EthersProvider) {
-    this._stealthMail = new Contract(stealthMail, abi, signerOrProvider) as unknown as StealthMailContract;
+    this._stealthMail = new Contract(stealthMailContractAddress, stealthMailABI, signerOrProvider) as unknown as StealthMailContract;
   }
 
   async sendStealthMail(_receiver: string,_pkx:string,_cipherText:string,_cid:string) {

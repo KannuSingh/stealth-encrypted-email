@@ -7,83 +7,24 @@ import ComposeMailForm from '@/components/ComposeMailForm';
 import { ethers } from 'ethers';
 import useAccount from '@/hooks/useAccount';
 import { Announcement, AnnouncementForUser, isAnnouncementForUser } from '@/utils/StealthEmailUtils';
+import { stealthMailABI, stealthMailContractAddress } from '@/utils/e3Stealth-js/classes/StealthEmail';
 
 export interface Mail {
-  id: number;
+  id: string;
   subject: string;
   from: string;
   time: string;
   tab: string;
+  message:string;
 }
 
 const Dashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('inbox');
-  const [selectedMail, setSelectedMail] = useState<Mail | null>(null);
+  const [selectedMail, setSelectedMail] = useState<AnnouncementForUser | null>(null);
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [announcementsForUser, setAnnouncementsForUser] = useState<AnnouncementForUser[]>([]);
-  const stealthMailContractAddress = '0x45d1A5afdf1fBa11CC4e5E2Ca37Aa0BF7149B82A';
   const { signer,provider } = useAccount();
-  const stealthMailABI = [
-      {
-        "anonymous": false,
-        "inputs": [
-          {
-            "indexed": true,
-            "internalType": "address",
-            "name": "receiver",
-            "type": "address"
-          },
-          {
-            "indexed": false,
-            "internalType": "bytes32",
-            "name": "pkx",
-            "type": "bytes32"
-          },
-          {
-            "indexed": false,
-            "internalType": "bytes32",
-            "name": "ciphertext",
-            "type": "bytes32"
-          },
-          {
-            "indexed": false,
-            "internalType": "bytes32",
-            "name": "cid",
-            "type": "bytes32"
-          }
-        ],
-        "name": "Announcement",
-        "type": "event"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "address payable",
-            "name": "_receiver",
-            "type": "address"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "_pkx",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "_ciphertext",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "_cid",
-            "type": "bytes32"
-          }
-        ],
-        "name": "sendEmail",
-        "outputs": [],
-        "stateMutability": "payable",
-        "type": "function"
-      }
-    ];
+  
   useEffect(() => {
     const fetchAnnouncements = async () => {
       try {
@@ -143,24 +84,13 @@ const Dashboard: React.FC = () => {
     setIsComposeOpen(true);
   };
 
-  const handleMailClick = (mail: Mail) => {
-    setSelectedMail(mail);
+  const handleMailClick = (announcementForUser: AnnouncementForUser) => {
+    setSelectedMail(announcementForUser);
   };
 
   const handleBackToMails = () => {
     setSelectedMail(null);
   };
-
-  // Sample mail data
-  const mailList: Mail[] = [
-    { id: 1, subject: 'Subject 1', from: 'example@example.com', time: '10:00 AM', tab: 'inbox' },
-    { id: 2, subject: 'Subject 2', from: 'example@example.com', time: '11:00 AM', tab: 'inbox' },
-    { id: 3, subject: 'Subject 3', from: 'example@example.com', time: '12:00 PM', tab: 'sent' },
-    { id: 4, subject: 'Subject 4', from: 'example@example.com', time: '1:00 PM', tab: 'drafts' },
-    { id: 5, subject: 'Subject 5', from: 'example@example.com', time: '2:00 PM', tab: 'trash' },
-  ];
-
-  const filteredMailList = mailList.filter((mail) => mail.tab === activeTab);
 
   return (
     <div className="h-screen flex">
@@ -179,7 +109,7 @@ const Dashboard: React.FC = () => {
           {selectedMail ? (
             <MailDetails selectedMail={selectedMail} handleBackToMails={handleBackToMails} />
           ) : (
-            <MailList announcementsForUser={announcementsForUser} mailList={filteredMailList} handleMailClick={handleMailClick} />
+            <MailList announcementsForUser={announcementsForUser} handleMailClick={handleMailClick} />
           )}
         </main>
       </div>
