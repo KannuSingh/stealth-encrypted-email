@@ -3,7 +3,7 @@ import { StealthMail as StealthMailContract } from '../typechain/StealthMail';
 import { Contract, JsonRpcSigner } from '../ethers';
 import type { EthersProvider } from '../types';
 
-export const stealthMailContractAddress = '0x9b39249FC8820372A48a6C51E4CeffaFf355b8D2';
+export const stealthMailContractAddress = '0xAd350e43BEd11E9dBb59e56a5Ee34205bCF082ff';
 export const stealthMailABI = [
   {
     "anonymous": false,
