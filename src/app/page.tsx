@@ -6,6 +6,7 @@ import { getPrivateKeys } from "@/utils/wallet";
 import { JsonRpcSigner } from "@ethersproject/providers";
 import { Signer } from "@ethersproject/abstract-signer";
 import { useRouter } from "next/navigation";
+import { showToast } from "@/components/ToastContainer";
 
 export default function HomePage() {
 
@@ -39,8 +40,9 @@ export function Home() {
       console.log(`Stealth Keys MetaData Already Set`)
     }
    }else{
+    showToast('Connect you wallet first');
     console.log("Connect you wallet first")
-    handleConnect()
+    // handleConnect()
    }
   }
   const handleSignIn = async () => {
@@ -53,14 +55,15 @@ export function Home() {
      const stealthKeyRegistry = new StealthKeyRegistry(signer as unknown as JsonRpcSigner)
     
      const stealthKeysSet = await stealthKeyRegistry.getStealthKeys(accounts[0])
+     console.log("Users Stealth Key Sets",stealthKeysSet)
      if(stealthKeysSet){
       router.push('/dashboard')
      }else{
        console.log(`Stealth Keys not set`)
      }
     }else{
-     console.log("Connect you wallet first")
-     handleConnect()
+      showToast('Connect you wallet first');
+      // handleConnect()
     }
   }
   return (

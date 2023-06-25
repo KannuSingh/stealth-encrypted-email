@@ -19,7 +19,7 @@ const Header = () => {
     <header className="bg-gray-800 py-4 px-8 text-white flex items-center justify-between border-b-2 border-white-500 border-solid ">
       <div className="flex items-center">
         {/* <Image src="/logo.png" alt="E3 Wallet" className="h-8 w-auto mr-2" /> */}
-        <h1 className="text-2xl font-semibold">{`Stealth Encrypted Email`}</h1>
+        <h1 className="text-2xl font-semibold">{`Stealth Mail`}</h1>
       </div>
 
       <nav className="space-x-4">

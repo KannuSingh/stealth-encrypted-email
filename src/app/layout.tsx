@@ -3,6 +3,7 @@ import '../styles/globals.css'
 import {  Montserrat } from 'next/font/google'
 
 import { AccountProvider } from '@/context/accountContext';
+import ToastContainer from '@/components/ToastContainer';
 const montserrat = Montserrat({ subsets: ['latin'] })
 
 export const metadata = {
@@ -21,6 +22,7 @@ export default function RootLayout({
      
           <AccountProvider >
               <Layout>
+                <ToastContainer />
                 {children}
               </Layout>
           </AccountProvider>
